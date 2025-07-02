@@ -1,5 +1,4 @@
 import pygame
-from PIL.ImageChops import screen
 
 
 class Ship:
@@ -11,7 +10,7 @@ class Ship:
         self.screen_rect = ai_game.screen.get_rect()
 
         # Load the ship image and get its rect.
-        self.image = pygame.image.load('images/spaceship_trans_bg.bmp')
+        self.image = pygame.image.load('images/spaceship_trans_bg2.bmp')
         self.rect = self.image.get_rect()
         # Start each new ship at the bottom center of the screen.
         self.rect.midbottom = self.screen_rect.midbottom
