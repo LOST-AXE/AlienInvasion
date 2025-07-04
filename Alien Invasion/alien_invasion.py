@@ -1,12 +1,14 @@
 import sys
 import pygame
 from matplotlib.style.core import available
+from time import sleep
 
 from settings import Settings
 from ship import Ship
 from bullet import Bullet
 from alien import Alien
 from star import Star
+from game_stats import GameStats
 
 class AlienInvasion:
     """Overall class to manage game assets and behavior"""
@@ -18,6 +20,8 @@ class AlienInvasion:
         self.screen = pygame.display.set_mode((0,0), pygame.FULLSCREEN)
         self.settings.screen_width = self.screen.get_rect().width
         self.settings.screen_height = self.screen.get_rect().height
+        # Create an instance to store game statistics.
+        self.stats = GameStats(self)
 
 
         pygame.display.set_caption("Alien Invasion")
@@ -148,9 +152,6 @@ class AlienInvasion:
             alien.rect.y += self.settings.fleet_drop_speed
         self.settings.fleet_direction *= -1
 
-
-
-
     def update_aliens(self):
         """Update the positions of all aliens in the fleet."""
         """
@@ -159,7 +160,8 @@ class AlienInvasion:
         """
         self._check_fleet_edges()
         self.aliens.update()
-
+        if pygame.sprite.spritecollideany(self.ship, self.aliens):
+            self._ship_hit()
 
     def _create_stars(self):
         """Create 15 stars randomly placed in the sky."""
@@ -184,6 +186,24 @@ class AlienInvasion:
 
         # Make the most recently drawn screen visible.
         pygame.display.flip()
+
+    def _ship_hit(self):
+        """Respond to the ship being hit by an alien."""
+
+        # Decrement ships_left.
+        self.stats.ship_left -= 1
+
+        # Get rid of any remaining aliens and bullets.
+        self.aliens.empty()
+        self.bullets.empty()
+
+        # Create a new fleet and center the ship.
+        self._create_fleet()
+        self.ship.center_ship()
+
+        # Pause.
+        sleep(1)
+
 if __name__ == "__main__":
     # Make a game instance, and run the game.
     ai = AlienInvasion()
