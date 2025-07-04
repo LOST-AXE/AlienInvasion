@@ -2,6 +2,7 @@ import sys
 import pygame
 from matplotlib.style.core import available
 from time import sleep
+from button import Button
 
 from settings import Settings
 from ship import Ship
@@ -22,7 +23,8 @@ class AlienInvasion:
         self.settings.screen_height = self.screen.get_rect().height
         # Create an instance to store game statistics.
         self.stats = GameStats(self)
-
+        # Make the Play button
+        self.play_button = Button(self,"Play")
 
         pygame.display.set_caption("Alien Invasion")
         self.ship = Ship(self)
@@ -181,11 +183,15 @@ class AlienInvasion:
         """Update images on the screen, and flip to the new screen."""
         self.screen.fill(self.settings.bg_color)
         self.ship.blitme()
+        # Draw the play button if game is inactive.
+
         for bullet in self.bullets:
             bullet.draw_bullet()
         self.aliens.draw(self.screen)
         for star in self.stars:
             star.draw_star()
+        if not self.stats.game_active:
+            self.play_button.draw_button()
 
         # Make the most recently drawn screen visible.
         pygame.display.flip()

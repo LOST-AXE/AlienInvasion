@@ -19,7 +19,7 @@ class Settings:
         self.star_width = 3
         self.star_height = 3
         self.star_color = (255, 255, 255)
-        self.alien_speed = 1
+        self.alien_speed = 2
         self.fleet_drop_speed = 10
         # fleet_direction of 1 represents right; -1 represents left.
         self.fleet_direction = 1
