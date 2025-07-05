@@ -103,6 +103,7 @@ class AlienInvasion:
             # Destroy existing bullets and create a new fleet
             self.bullets.empty()
             self._create_fleet()
+            self.settings.increase_speed()
 
     def _update_stars(self):
         """Move stars down and keep 15 on screen."""
@@ -240,6 +241,7 @@ class AlienInvasion:
             self._reset_game()
 
     def _reset_game(self):
+        self.settings.initialize_dynamic_settings()
         self.stats.game_active = True
         # Reset the game statistics.
         self.stats.reset_stats()
