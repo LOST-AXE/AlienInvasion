@@ -32,42 +32,7 @@ class AlienInvasion:
         # Make the buttons
         self.color_button = (220,220,220)
         self.color_button_text = (0,0,0)
-        self.play_button = Button(self,"Play",self.screen_rect_centerx,
-                                  self.screen_rect_centery,
-                                  self.color_button, self.color_button_text)
-        self.settings_button = Button(self, "Settings",
-                                      self.screen_rect_centerx,
-                                      self.screen_rect_centery + 100,
-                                      self.color_button, self.color_button_text)
-        self.quit_button = Button(self, "Quit",
-                                      self.screen_rect_centerx,
-                                      self.screen_rect_centery + 200,
-                                  self.color_button, self.color_button_text)
-        self.light_button = Button(self, "Light mode",
-                                      self.screen_rect_centerx - 150,
-                                      self.screen_rect_centery - 100,
-                                   self.color_button, self.color_button_text)
-        self.dark_button = Button(self, "Dark mode",
-                                      self.screen_rect_centerx + 150,
-                                      self.screen_rect_centery -100,
-                                  self.color_button, self.color_button_text)
-
-        self.easy_button = Button(self, "Easy",
-                                  self.screen_rect_centerx - 250,
-                                  self.screen_rect_centery + 175,
-                                  self.color_button, self.color_button_text)
-
-        self.medium_button = Button(self, "Medium",
-                                  self.screen_rect_centerx,
-                                  self.screen_rect_centery + 175,
-                                    self.color_button, self.color_button_text)
-
-        self.hard_button = Button(self, "Hard",
-                                  self.screen_rect_centerx + 250,
-                                  self.screen_rect_centery + 175,
-                                  self.color_button, self.color_button_text)
-        self.back_button = Button(self, "Back",  120,40,
-                                  self.color_button, self.color_button_text)
+        self._rebuild_buttons()
 
 
         pygame.display.set_caption("Alien Invasion")
@@ -96,12 +61,18 @@ class AlienInvasion:
                 sys.exit()
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
-                self._check_play_button(mouse_pos)
-                self._check_setting_button(mouse_pos)
-                self._check_quit_button(mouse_pos)
-                self._check_back_button(mouse_pos)
-                self._check_light_button(mouse_pos)
-                self._check_dark_button(mouse_pos)
+                if self.show_settings:
+                    self._check_back_button(mouse_pos)
+                    self._check_light_button(mouse_pos)
+                    self._check_dark_button(mouse_pos)
+                    self._check_easy_button(mouse_pos)
+                    self._check_medium_button(mouse_pos)
+                    self._check_hard_button(mouse_pos)
+                else:
+                    self._check_play_button(mouse_pos)
+                    self._check_setting_button(mouse_pos)
+                    self._check_quit_button(mouse_pos)
+
 
             elif event.type == pygame.KEYDOWN:
                 self._check_keydown_events(event)
@@ -307,6 +278,7 @@ class AlienInvasion:
         """Allow player to quit the game through button."""
         button_clicked = self.quit_button.rect.collidepoint(mouse_pos)
         if button_clicked and not self.stats.game_active:
+            print("Exiting game via quit button")
             sys.exit()
 
     def _check_back_button(self, mouse_pos):
@@ -316,27 +288,51 @@ class AlienInvasion:
             self.show_settings = not self.show_settings
 
     def _check_light_button(self, mouse_pos):
-        """Allow the player to switch to light mode."""
         button_clicked = self.light_button.rect.collidepoint(mouse_pos)
         if button_clicked:
             self.settings.bg_color = (220, 220, 220)
             self.dark = False
             self.settings.star_color = (0, 0, 0)
             self.color_button = (0, 0, 0)
-            self.color_button_text = (255,255,255)
-            self._rebuild_buttons()
+            self.color_button_text = (255, 255, 255)
+            self._rebuild_buttons()  # Simplified call
 
     def _check_dark_button(self, mouse_pos):
-        """Allow the player to switch to dark mode."""
         button_clicked = self.dark_button.rect.collidepoint(mouse_pos)
         if button_clicked:
             self.settings.bg_color = (4, 10, 46)
             self.dark = True
             self.settings.star_color = (255, 255, 255)
             self.color_button = (220, 220, 220)
-            self.color_button_text = (0,0,0)
-            self._rebuild_buttons()
+            self.color_button_text = (0, 0, 0)
+            self._rebuild_buttons()  # Simplified call
 
+    def _check_easy_button(self, mouse_pos):
+        button_clicked = self.easy_button.rect.collidepoint(mouse_pos)
+        if button_clicked:
+            self.settings.ship_speed = 2
+            self.settings.bullet_speed = 4.0
+            self.settings.alien_speed = 1.0
+            self._rebuild_buttons()  # Simplified call
+
+    def _check_medium_button(self, mouse_pos):
+        try:
+            button_clicked = self.medium_button.rect.collidepoint(mouse_pos)
+            if button_clicked:
+                self.settings.ship_speed = 1.5
+                self.settings.bullet_speed = 3.0
+                self.settings.alien_speed = 1.0
+                self._rebuild_buttons()
+        except Exception as e:
+            print(f'{e}')
+
+    def _check_hard_button(self, mouse_pos):
+        button_clicked = self.hard_button.rect.collidepoint(mouse_pos)
+        if button_clicked:
+            self.settings.ship_speed = 1.4
+            self.settings.bullet_speed = 3.0
+            self.settings.alien_speed = 1.2
+            self._rebuild_buttons()  # Simplified call
 
     def _reset_game(self):
         self.settings.initialize_dynamic_settings()
@@ -364,54 +360,103 @@ class AlienInvasion:
             self.difficulty_text = Text(self, "Difficulty", "Light",
                                         56, 470)
 
-    def _settings(self):
-        self.light_button = Button(self,"Play",self.screen_rect_centerx,
-                                  self.screen_rect_centery)
-        self.settings_button = Button(self, "Settings",
-                                      self.screen_rect_centerx,
-                                      self.screen_rect_centery + 100)
-        self.quit_button = Button(self, "Quit",
-                                      self.screen_rect_centerx,
-                                      self.screen_rect_centery + 200)
 
     def _rebuild_buttons(self):
+        # Determine current theme and colors
+        theme = "Dark" if self.dark else "Light"
+        base_color = self.color_button
+        base_text = self.color_button_text
+
+        # Define highlight colors based on theme
+        highlight_bg, highlight_text = ((0, 0, 0),
+                                    (255, 255, 255)) if theme == "Dark" else (
+            (255, 255, 0), (0, 0, 0))
+
+        # Theme buttons
+        self.light_button = self._create_theme_button(
+            "Light mode", self.screen_rect_centerx - 150,
+                          self.screen_rect_centery - 100,
+                          theme == "Light", highlight_bg, highlight_text)
+
+        self.dark_button = self._create_theme_button(
+            "Dark mode", self.screen_rect_centerx + 150,
+                         self.screen_rect_centery - 100,
+                         theme == "Dark", highlight_bg, highlight_text)
+
+
+        # Difficulty buttons
+        self.easy_button = self._create_difficulty_button(
+            "Easy", self.screen_rect_centerx - 250,
+                    self.screen_rect_centery + 175,
+            base_color, base_text, highlight_bg, highlight_text)
+
+        self.medium_button = self._create_difficulty_button(
+            "Medium", self.screen_rect_centerx,
+            self.screen_rect_centery + 175,
+            base_color, base_text, highlight_bg, highlight_text)
+
+        self.hard_button = self._create_difficulty_button(
+            "Hard", self.screen_rect_centerx + 250,
+                    self.screen_rect_centery + 175,
+            base_color, base_text, highlight_bg, highlight_text)
+
+        # Standard buttons (always use base colors)
         self.play_button = Button(self, "Play", self.screen_rect_centerx,
                                   self.screen_rect_centery,
-                                  self.color_button, self.color_button_text)
+                                  base_color, base_text)
+
         self.settings_button = Button(self, "Settings",
                                       self.screen_rect_centerx,
                                       self.screen_rect_centery + 100,
-                                      self.color_button,
-                                      self.color_button_text)
+                                      base_color, base_text)
+
         self.quit_button = Button(self, "Quit",
                                   self.screen_rect_centerx,
                                   self.screen_rect_centery + 200,
-                                  self.color_button, self.color_button_text)
-        self.light_button = Button(self, "Light mode",
-                                   self.screen_rect_centerx - 150,
-                                   self.screen_rect_centery - 100,
-                                   self.color_button, self.color_button_text)
-        self.dark_button = Button(self, "Dark mode",
-                                  self.screen_rect_centerx + 150,
-                                  self.screen_rect_centery - 100,
-                                  self.color_button, self.color_button_text)
-        self.easy_button = Button(self, "Easy",
-                                  self.screen_rect_centerx - 250,
-                                  self.screen_rect_centery + 175,
-                                  self.color_button, self.color_button_text)
-        self.medium_button = Button(self, "Medium",
-                                    self.screen_rect_centerx,
-                                    self.screen_rect_centery + 175,
-                                    self.color_button, self.color_button_text)
-        self.hard_button = Button(self, "Hard",
-                                  self.screen_rect_centerx + 250,
-                                  self.screen_rect_centery + 175,
-                                  self.color_button, self.color_button_text)
+                                  base_color, base_text)
+
         self.back_button = Button(self, "Back", 120, 40,
-                                  self.color_button, self.color_button_text)
+                                  base_color, base_text)
+
+    def _create_theme_button(self, text, x, y, is_selected, highlight_bg,
+                             highlight_text):
+        """Create a theme button with proper highlighting"""
+        if is_selected:
+            return Button(self, text, x, y, highlight_bg, highlight_text)
+        else:
+            return Button(self, text, x, y, self.color_button,
+                          self.color_button_text)
+
+
+    def _create_difficulty_button(self, text, x, y, base_bg, base_text,
+                                  highlight_bg, highlight_text):
+        """Create a difficulty button with proper highlighting"""
+        # Compare current settings to determine if this is selected difficulty
+        is_selected = False
+
+        if text == "Easy":
+            is_selected = (self.settings.ship_speed == 2 and
+                           self.settings.bullet_speed == 4.0 and
+                           self.settings.alien_speed == 1.0)
+        elif text == "Medium":
+            is_selected = (self.settings.ship_speed == 1.5 and
+                           self.settings.bullet_speed == 3.0 and
+                           self.settings.alien_speed == 1.0)
+        elif text == "Hard":
+            is_selected = (self.settings.ship_speed == 1.4 and
+                           self.settings.bullet_speed == 3.0 and
+                           self.settings.alien_speed == 1.2)
+
+        if is_selected:
+            return Button(self, text, x, y, highlight_bg, highlight_text)
+        else:
+            return Button(self, text, x, y, base_bg, base_text)
 
 
 if __name__ == "__main__":
     # Make a game instance, and run the game.
-    ai = AlienInvasion()
-    ai.run_game()
+    try:
+        ai = AlienInvasion()
+        ai.run_game()
+    except Exception as e:
+        print(f"Crash: {e}")
