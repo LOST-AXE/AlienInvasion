@@ -7,6 +7,7 @@ class Settings:
         # Screen settings
         self.screen_width = 900
         self.screen_height = 600
+        # Start the game off in dark mode
         self.bg_color = (4, 10, 46)
         # Ship settings
         self.ship_limit = 3
@@ -23,6 +24,7 @@ class Settings:
         self.star_speed = 0.7
         self.star_width = 3
         self.star_height = 3
+        # Start in Dark mode for stars
         self.star_color = (255, 255, 255)
 
     def initialize_dynamic_settings(self):

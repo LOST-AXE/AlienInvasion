@@ -10,6 +10,7 @@ from bullet import Bullet
 from alien import Alien
 from star import Star
 from game_stats import GameStats
+from text import Text
 
 class AlienInvasion:
     """Overall class to manage game assets and behavior"""
@@ -17,21 +18,63 @@ class AlienInvasion:
         """Initialize the game, and create game resources"""
         pygame.init()
         self.settings = Settings()
-
+        # Flag for settings
+        self.show_settings = False
+        self.dark = True
         self.screen = pygame.display.set_mode((0,0), pygame.FULLSCREEN)
+        self.screen_rect = self.screen.get_rect()
+        self.screen_rect_centerx = self.screen_rect.centerx
+        self.screen_rect_centery = self.screen_rect.centery
         self.settings.screen_width = self.screen.get_rect().width
         self.settings.screen_height = self.screen.get_rect().height
         # Create an instance to store game statistics.
         self.stats = GameStats(self)
-        # Make the Play button
-        self.play_button = Button(self,"Play")
+        # Make the buttons
+        self.color_button = (220,220,220)
+        self.color_button_text = (0,0,0)
+        self.play_button = Button(self,"Play",self.screen_rect_centerx,
+                                  self.screen_rect_centery,
+                                  self.color_button, self.color_button_text)
+        self.settings_button = Button(self, "Settings",
+                                      self.screen_rect_centerx,
+                                      self.screen_rect_centery + 100,
+                                      self.color_button, self.color_button_text)
+        self.quit_button = Button(self, "Quit",
+                                      self.screen_rect_centerx,
+                                      self.screen_rect_centery + 200,
+                                  self.color_button, self.color_button_text)
+        self.light_button = Button(self, "Light mode",
+                                      self.screen_rect_centerx - 150,
+                                      self.screen_rect_centery - 100,
+                                   self.color_button, self.color_button_text)
+        self.dark_button = Button(self, "Dark mode",
+                                      self.screen_rect_centerx + 150,
+                                      self.screen_rect_centery -100,
+                                  self.color_button, self.color_button_text)
+
+        self.easy_button = Button(self, "Easy",
+                                  self.screen_rect_centerx - 250,
+                                  self.screen_rect_centery + 175,
+                                  self.color_button, self.color_button_text)
+
+        self.medium_button = Button(self, "Medium",
+                                  self.screen_rect_centerx,
+                                  self.screen_rect_centery + 175,
+                                    self.color_button, self.color_button_text)
+
+        self.hard_button = Button(self, "Hard",
+                                  self.screen_rect_centerx + 250,
+                                  self.screen_rect_centery + 175,
+                                  self.color_button, self.color_button_text)
+        self.back_button = Button(self, "Back",  120,40,
+                                  self.color_button, self.color_button_text)
+
 
         pygame.display.set_caption("Alien Invasion")
         self.ship = Ship(self)
         self.bullets = pygame.sprite.Group()
         self.aliens = pygame.sprite.Group()
         self.stars = pygame.sprite.Group()
-
         self._create_fleet()
         self._create_stars()
 
@@ -54,6 +97,11 @@ class AlienInvasion:
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
                 self._check_play_button(mouse_pos)
+                self._check_setting_button(mouse_pos)
+                self._check_quit_button(mouse_pos)
+                self._check_back_button(mouse_pos)
+                self._check_light_button(mouse_pos)
+                self._check_dark_button(mouse_pos)
 
             elif event.type == pygame.KEYDOWN:
                 self._check_keydown_events(event)
@@ -196,8 +244,18 @@ class AlienInvasion:
         self.aliens.draw(self.screen)
         for star in self.stars:
             star.draw_star()
-        if not self.stats.game_active:
+        if not self.stats.game_active and not self.show_settings:
             self.play_button.draw_button()
+            self.settings_button.draw_button()
+            self.quit_button.draw_button()
+        if self.show_settings and not self.stats.game_active:
+            self.light_button.draw_button()
+            self.dark_button.draw_button()
+            self.easy_button.draw_button()
+            self.medium_button.draw_button()
+            self.hard_button.draw_button()
+            self.back_button.draw_button()
+            self._setting_text()
 
         # Make the most recently drawn screen visible.
         pygame.display.flip()
@@ -233,12 +291,52 @@ class AlienInvasion:
                 self._ship_hit()
                 break
 
-
     def _check_play_button(self, mouse_pos):
         """Start a new game when the player clicks play."""
         button_clicked = self.play_button.rect.collidepoint(mouse_pos)
         if button_clicked and not self.stats.game_active:
             self._reset_game()
+
+    def _check_setting_button(self, mouse_pos):
+        """Allow player to change difficulty and background color."""
+        button_clicked = self.settings_button.rect.collidepoint(mouse_pos)
+        if button_clicked and not self.stats.game_active:
+            self.show_settings = True
+
+    def _check_quit_button(self, mouse_pos):
+        """Allow player to quit the game through button."""
+        button_clicked = self.quit_button.rect.collidepoint(mouse_pos)
+        if button_clicked and not self.stats.game_active:
+            sys.exit()
+
+    def _check_back_button(self, mouse_pos):
+        """Allow a player to return to previous menu screen."""
+        button_clicked = self.back_button.rect.collidepoint(mouse_pos)
+        if button_clicked:
+            self.show_settings = not self.show_settings
+
+    def _check_light_button(self, mouse_pos):
+        """Allow the player to switch to light mode."""
+        button_clicked = self.light_button.rect.collidepoint(mouse_pos)
+        if button_clicked:
+            self.settings.bg_color = (220, 220, 220)
+            self.dark = False
+            self.settings.star_color = (0, 0, 0)
+            self.color_button = (0, 0, 0)
+            self.color_button_text = (255,255,255)
+            self._rebuild_buttons()
+
+    def _check_dark_button(self, mouse_pos):
+        """Allow the player to switch to dark mode."""
+        button_clicked = self.dark_button.rect.collidepoint(mouse_pos)
+        if button_clicked:
+            self.settings.bg_color = (4, 10, 46)
+            self.dark = True
+            self.settings.star_color = (255, 255, 255)
+            self.color_button = (220, 220, 220)
+            self.color_button_text = (0,0,0)
+            self._rebuild_buttons()
+
 
     def _reset_game(self):
         self.settings.initialize_dynamic_settings()
@@ -253,6 +351,65 @@ class AlienInvasion:
         self.ship.center_ship()
         # Hide the mouse cursor.
         pygame.mouse.set_visible(False)
+
+    def _setting_text(self):
+        if self.dark == True:
+            self.theme_text = Text(self, "Theme", "Dark",
+                                   56, 200)
+            self.difficulty_text = Text(self, "Difficulty", "Dark",
+                                        56, 470)
+
+        elif self.dark == False:
+            self.theme_text = Text(self, "Theme", "Light", 56, 200)
+            self.difficulty_text = Text(self, "Difficulty", "Light",
+                                        56, 470)
+
+    def _settings(self):
+        self.light_button = Button(self,"Play",self.screen_rect_centerx,
+                                  self.screen_rect_centery)
+        self.settings_button = Button(self, "Settings",
+                                      self.screen_rect_centerx,
+                                      self.screen_rect_centery + 100)
+        self.quit_button = Button(self, "Quit",
+                                      self.screen_rect_centerx,
+                                      self.screen_rect_centery + 200)
+
+    def _rebuild_buttons(self):
+        self.play_button = Button(self, "Play", self.screen_rect_centerx,
+                                  self.screen_rect_centery,
+                                  self.color_button, self.color_button_text)
+        self.settings_button = Button(self, "Settings",
+                                      self.screen_rect_centerx,
+                                      self.screen_rect_centery + 100,
+                                      self.color_button,
+                                      self.color_button_text)
+        self.quit_button = Button(self, "Quit",
+                                  self.screen_rect_centerx,
+                                  self.screen_rect_centery + 200,
+                                  self.color_button, self.color_button_text)
+        self.light_button = Button(self, "Light mode",
+                                   self.screen_rect_centerx - 150,
+                                   self.screen_rect_centery - 100,
+                                   self.color_button, self.color_button_text)
+        self.dark_button = Button(self, "Dark mode",
+                                  self.screen_rect_centerx + 150,
+                                  self.screen_rect_centery - 100,
+                                  self.color_button, self.color_button_text)
+        self.easy_button = Button(self, "Easy",
+                                  self.screen_rect_centerx - 250,
+                                  self.screen_rect_centery + 175,
+                                  self.color_button, self.color_button_text)
+        self.medium_button = Button(self, "Medium",
+                                    self.screen_rect_centerx,
+                                    self.screen_rect_centery + 175,
+                                    self.color_button, self.color_button_text)
+        self.hard_button = Button(self, "Hard",
+                                  self.screen_rect_centerx + 250,
+                                  self.screen_rect_centery + 175,
+                                  self.color_button, self.color_button_text)
+        self.back_button = Button(self, "Back", 120, 40,
+                                  self.color_button, self.color_button_text)
+
 
 if __name__ == "__main__":
     # Make a game instance, and run the game.
