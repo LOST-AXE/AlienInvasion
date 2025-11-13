@@ -1,8 +1,7 @@
 """
 MP2RAGE signal simulator for quantitative MRI at 7T.
 
-This class implements the MP2RAGE signal equations to simulate INV1, INV2,
-and UNI images. It can generate T1 and PD* maps from simulated or real data.
+This class implements the MP2RAGE signal equations to simulate INV1, INV2.
 """
 
 import numpy as np
