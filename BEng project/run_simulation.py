@@ -34,8 +34,8 @@ plt.figure()
 colors = {"White Matter": "k", "Grey Matter": "r", "CSF": "b"}
 
 for name, data in results.items():
-    INV1_plot = -data["INV1"]  # flip sign for recovery visualization
-    INV2_plot = -data["INV2"]
+    INV1_plot = data["INV1"]  # flip sign for recovery visualization
+    INV2_plot = data["INV2"]
 
     plt.plot(
         [sim.TI1, sim.TI2],
