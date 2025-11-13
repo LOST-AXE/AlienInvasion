@@ -47,7 +47,7 @@ TISSUE_PARAMS = {
 }
 
 # Protocol parameters from Dokumacı et al., Quantitative T1 and Effective
-# Proton Density
+# Proton Density.
 PROTOCOLS = {
     'protocol_1': {
         'TR_MP2RAGE': 4000,    # (ms) - Total repetition time
