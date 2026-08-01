@@ -18,8 +18,8 @@ PD values are normalised (WM~0.69, GM~0.81, CSF~1.0) from literature.
 #  Adult VALUES (literature)
 
 TISSUE_PARAMS_ADULT = {
-    "white_matter": {"T1": 1092, "T2star": 28,   "PD": 0.69},
-    "grey_matter":  {"T1": 1690, "T2star": 32.2, "PD": 0.81},
+    "white_matter": {"T1": 1147, "T2star": 28,   "PD": 0.69},
+    "grey_matter":  {"T1": 2040, "T2star": 32.2, "PD": 0.81},
     "csf":          {"T1": 4470, "T2star": 200,  "PD": 1.0},
 }
 
@@ -35,7 +35,7 @@ TISSUE_PARAMS_PAEDIATRIC = {
 }
 
 # Active tissue params (change this line to switch dataset)
-TISSUE_PARAMS = TISSUE_PARAMS_PAEDIATRIC
+TISSUE_PARAMS = TISSUE_PARAMS_ADULT
 
 
 #  MP2RAGE PROTOCOL

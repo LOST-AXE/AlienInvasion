@@ -117,7 +117,7 @@ def estimate_tissue_T1s(T1_map: np.ndarray,
 #  main
 def main():
     mat = sio.loadmat(
-        "C:/Users/jiges/Downloads/T1_Fit_Results_RICE092_s1_256_BETmask_B1.mat"
+        "C:/Users/jiges/Downloads/RICE096_final_fixed.mat"
     )
 
     # Print all variables
@@ -143,8 +143,8 @@ def main():
 
     # Middle slice for visualisation
     if T1_full.ndim == 3:
-        mid = T1_full.shape[2] // 2
-        T1_slice = T1_full[mid, :, :]
+        mid = T1_full.shape[1] // 2
+        T1_slice = T1_full[:, 121, :]
     else:
         T1_slice = T1_full
 

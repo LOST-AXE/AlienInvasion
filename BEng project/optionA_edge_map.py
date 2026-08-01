@@ -96,7 +96,7 @@ def main(mat_path: str = MAT_PATH):
     # Sobel spatial gradient on |INV1|
     grad   = sobel_mag(absINV1, mask=valid)
     grad_s = np.clip(grad / (np.percentile(grad[valid], 99) + 1e-12), 0, 1)
-    score  = robust_norm(absINV1, valid)        # EdgeA * grad_s
+    score  =  robust_norm(absINV1, valid)        # EdgeA * grad_s
     score[~valid] = 0.0
 
 

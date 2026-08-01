@@ -33,7 +33,7 @@ from Utils import (get_subject_id, get_valid_mask, get_boundary_masks,
 # Dataset path
 MAT_PATH = (
     "C:/Users/jiges/Downloads/Example_T1_data/Example_T1_data/"
-    "Adult05_lsq_fit_16022024_x0_20000_1500.mat"
+    "Child01_lsq_fit_16022024_x0_20000_1500.mat"
 )
 
 
@@ -130,10 +130,10 @@ def main(mat_path: str = MAT_PATH):
                 (binary_dilation(gm, iterations=2) & wm))
 
     fig, axes = plt.subplots(2, 3, figsize=(15, 10))
-    fig.suptitle(
-        f"FLAWS dual-null — {subject_id}\n"
-        f"TI_WM={TI_WM:.0f} ms  |  TI_GM={TI_GM:.0f} ms",
-        fontsize=12, fontweight="bold")
+    #fig.suptitle(
+     #   f"FLAWS dual-null — {subject_id}\n"
+      #  f"TI_WM={TI_WM:.0f} ms  |  TI_GM={TI_GM:.0f} ms",
+       # fontsize=12, fontweight="bold")
 
     def show(ax, img, title, signed=False):
         if signed:
