@@ -117,7 +117,7 @@ def estimate_tissue_T1s(T1_map: np.ndarray,
 #  main
 def main():
     mat = sio.loadmat(
-        "C:/Users/jiges/Downloads/RICE096_final_fixed.mat"
+        "C:/Users/jiges/Downloads/RICE0127_final_fixed.mat"
     )
 
     # Print all variables

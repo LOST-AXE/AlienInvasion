@@ -17,7 +17,7 @@ from nibabel.affines import voxel_sizes
 from Utils import get_subject_id
 
 MAT_PATH = (
-    "C:/Users/jiges/Downloads/RICE096_final_fixed.mat"
+    "C:/Users/jiges/Downloads/RICE0127_final_fixed.mat"
 )
 
 
@@ -35,7 +35,7 @@ def main(mat_path=MAT_PATH):
         T1 = mat["T1_soln"].astype(np.float32)
         T1_clipped = np.clip(T1, 400, 3000)
         t1_raw = 3000 - T1_clipped  # invert so WM is bright
-    voxel_size = 0.6
+    voxel_size = 0.65
     affine = np.diag([voxel_size, voxel_size, voxel_size, 1.0])
     img = nib.Nifti1Image(t1_raw, affine=affine)
     out_path = os.path.join(os.path.dirname(mat_path),
